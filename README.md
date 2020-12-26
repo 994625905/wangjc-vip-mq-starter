@@ -33,8 +33,8 @@ logging.level.vip.wangjc=debug
 多个交换机就以逗号隔开的方式；有默认属性的可以不用填（填就必须填完整	），
 
 ```java
-@ConfigurationProperties(prefix = "vip.wangjc.mq.exchange")
-public class RabbitmqAutoExchangeProperties {
+    @ConfigurationProperties(prefix = "vip.wangjc.mq.exchange")
+    public class RabbitmqAutoExchangeProperties {
 	/**
 	 * 交换机名称集合（必填项）
 	 */
@@ -77,7 +77,7 @@ public class RabbitmqAutoExchangeProperties {
 	 */
 	private List<AcknowledgeMode> ackList;
 	…………省略setting/getting
-}
+    }
 ```
 
 eg：对应的配置项为例（创建三台交换机）
@@ -93,8 +93,8 @@ vip.wangjc.mq.exchange.ackList=MANUAL,AUTO,AUTO
 跟上文创建的交换机相对应，采用预设值匹配的方式来获取，构建的方式与交换机一致：多个以逗号隔开；有默认属性的可以不用填（填就必须填完整	）
 
 ```java
-@ConfigurationProperties(prefix = "vip.wangjc.mq.queue")
-public class RabbitmqAutoQueueProperties {
+    @ConfigurationProperties(prefix = "vip.wangjc.mq.queue")
+    public class RabbitmqAutoQueueProperties {
 	/**
 	 * 队列名称
 	 * vip.wangjc.mq.queue.{exchange}.name=
@@ -125,7 +125,7 @@ public class RabbitmqAutoQueueProperties {
 	public void setBindExchange(Map<String, List<Object>> bindExchange) {
 		this.bindExchange = bindExchange;
 	}
-}
+    }
 ```
 
 eg：对应的配置项为例（三台交换机下的队列）
@@ -152,10 +152,10 @@ vip.wangjc.mq.queue.bind-exchange.wangjc-delay.exclusive=false
 只需要在主类上，或者是任何配置类上添加该注解，然后根据情况选择设置参数即可开启，其中RabbitmqProjectType比较重要，表明该应用是生产者还是消费者，默认为双存的（生产者/消费者位于同一应用下，只是不同线程来处理），如果是生产者，则只提供对应的消息发送投递功能；如果是消费者，则只拥有消息接收和确认的功能。MsgSendConfirmCallBack和MsgSendReturnCallBack都可以自定义子类，重写方法在其中完成定制化业务。
 
 ```java
-@Target({ElementType.TYPE})
-@Retention(RetentionPolicy.RUNTIME)
-@Import({EnableRabbitmqRegister.class, RabbitmqApplicationSelector.class})
-public @interface EnableRabbitMq {
+    @Target({ElementType.TYPE})
+    @Retention(RetentionPolicy.RUNTIME)
+    @Import({EnableRabbitmqRegister.class, RabbitmqApplicationSelector.class})
+    public @interface EnableRabbitMq {
 	/**
 	 * mq项目端的类型，默认为双存（生产者和消费者并存）
 	 * @return
@@ -173,7 +173,7 @@ public @interface EnableRabbitMq {
 	 * @return
 	 */
 	Class<? extends MsgSendReturnCallBack> returns() default MsgSendReturnCallBack.class;
-}
+    }
 ```
 
 ## 生产者
@@ -181,7 +181,7 @@ public @interface EnableRabbitMq {
 自动注册了ProducerService的bean，作为应用项目，只需要关注后三个发送消息的方法即可，至于前面提供的功能，都是vip-wangjc-mq-starter在完成初始化时用到的。
 
 ```java
-public interface ProducerService {
+    public interface ProducerService {
 	/**
 	 * 获取RabbitAdmin
 	 * @return
@@ -314,7 +314,7 @@ public interface ProducerService {
 	 * @param delayTime
 	 */
 	void sendDelayMessage(String exchangeName, String routingKey, String msg, Integer delayTime);
-}
+    }
 ```
 
 ## 消费者
@@ -324,7 +324,7 @@ public interface ProducerService {
 
 
 ```java
-public abstract class AbstractConsumerHandler implements ChannelAwareMessageListener {
+    public abstract class AbstractConsumerHandler implements ChannelAwareMessageListener {
 	private static final Logger logger = LoggerFactory.getLogger(AbstractConsumerHandler.class);
 
 	/**
@@ -395,7 +395,7 @@ public abstract class AbstractConsumerHandler implements ChannelAwareMessageList
 			e.printStackTrace();
 		}
 	}
-}
+    }
 ```
 
 消费端只需要继承该抽象类，重写handleMessage方法来执行根据消息具体的业务逻辑即可。
@@ -529,9 +529,9 @@ ProducerService对外提供自动注入的bean，做消息投递；AbstractConsu
 ## 4.生产者--消息投递
 
 ```java
-@RestController
-@RequestMapping(value = "mq")
-public class ProducerController {
+    @RestController
+    @RequestMapping(value = "mq")
+    public class ProducerController {
 	@Autowired
 	private ProducerService producerService;
 
@@ -555,14 +555,14 @@ public class ProducerController {
 		this.producerService.sendDelayMessage("wangjc-delay","delay-routing", JSON.toJSONString(user),20000);
 		return user;
 	}
-}
+    }
 ```
 
 ## 5.消费者--消息处理
 
 ```java
-@Component
-public class ConsumerHandler extends AbstractConsumerHandler {
+    @Component
+    public class ConsumerHandler extends AbstractConsumerHandler {
 	@Override
 	public Boolean handleMessage(String msg, Channel channel, String queue) {
 
@@ -571,7 +571,7 @@ public class ConsumerHandler extends AbstractConsumerHandler {
 
 		return true;
 	}
-}
+    }
 ```
 
 更多的业务场景，我就不一一做演示了。
