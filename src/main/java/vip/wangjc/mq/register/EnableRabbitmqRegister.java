@@ -14,7 +14,7 @@ import vip.wangjc.mq.entity.RabbitmqProjectType;
  * rabbitmq的注册器
  * @author wangjc
  * @title: EnableRabbitmqRegister
- * @projectName wangjc-vip
+ * @projectName wangjc-vip-mq
  * @date 2020/12/24 - 14:05
  */
 public class EnableRabbitmqRegister implements ImportBeanDefinitionRegistrar {

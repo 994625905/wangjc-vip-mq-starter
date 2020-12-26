@@ -21,7 +21,7 @@ import vip.wangjc.mq.producer.template.DefinedRabbitTemplate;
  * rabbitmq的自动配置
  * @author wangjc
  * @title: RabbitmqAutoConfigure
- * @projectName wangjc-vip
+ * @projectName wangjc-vip-mq
  * @date 2020/12/24 - 14:31
  */
 @Configuration

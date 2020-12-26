@@ -10,7 +10,7 @@ import java.util.List;
  * rabbitmq的交换机配置文件对应
  * @author wangjc
  * @title: RabbitmqProperties
- * @projectName wangjc-vip
+ * @projectName wangjc-vip-mq
  * @date 2020/12/24 - 15:31
  */
 @ConfigurationProperties(prefix = "vip.wangjc.mq.exchange")

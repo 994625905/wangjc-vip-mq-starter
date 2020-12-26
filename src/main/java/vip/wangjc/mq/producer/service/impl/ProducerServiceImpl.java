@@ -14,7 +14,7 @@ import java.util.Map;
 /**
  * @author wangjc
  * @title: ProduceServiceImpl
- * @projectName wangjc-vip
+ * @projectName wangjc-vip-mq
  * @date 2020/12/23 - 19:40
  */
 public class ProducerServiceImpl implements ProducerService {

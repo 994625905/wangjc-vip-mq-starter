@@ -8,7 +8,7 @@ import org.springframework.amqp.rabbit.core.RabbitTemplate;
  * 消息生产者提供的接口
  * @author wangjc
  * @title: ProduceService
- * @projectName wangjc-vip
+ * @projectName wangjc-vip-mq
  * @date 2020/12/23 - 19:39
  */
 public interface ProducerService {

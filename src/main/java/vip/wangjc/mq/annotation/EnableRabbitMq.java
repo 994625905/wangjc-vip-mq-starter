@@ -13,10 +13,10 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * 自定义注解：开启wangjc-mq
+ * 自定义注解：开启wangjc-vip-mq
  * @author wangjc
  * @title: EnableRabbitMq
- * @projectName wangjc-vip
+ * @projectName wangjc-vip-mq
  * @date 2020/12/24 - 14:01
  */
 @Target({ElementType.TYPE})

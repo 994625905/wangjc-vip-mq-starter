@@ -13,7 +13,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
  * 消费者的抽象类消费器
  * @author wangjc
  * @title: ConsumerHandler
- * @projectName wangjc-vip
+ * @projectName wangjc-vip-mq
  * @date 2020/12/24 - 11:18
  */
 public abstract class AbstractConsumerHandler implements ChannelAwareMessageListener {

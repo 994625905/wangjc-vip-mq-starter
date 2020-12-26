@@ -9,7 +9,7 @@ import org.springframework.amqp.rabbit.core.RabbitTemplate;
  * 消息发送到交换机的确认机制
  * @author wangjc
  * @title: MsgSendConfirmCallBack
- * @projectName wangjc-vip
+ * @projectName wangjc-vip-mq
  * @date 2020/12/23 - 19:28
  */
 public class MsgSendConfirmCallBack implements RabbitTemplate.ConfirmCallback{

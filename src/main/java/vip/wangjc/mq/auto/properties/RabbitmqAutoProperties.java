@@ -6,7 +6,7 @@ import vip.wangjc.mq.entity.RabbitmqProjectType;
  * rabbitmq的交换机配置文件对应，改用注解设定
  * @author wangjc
  * @title: RabbitmqProperties
- * @projectName wangjc-vip
+ * @projectName wangjc-vip-mq
  * @date 2020/12/24 - 15:31
  */
 public class RabbitmqAutoProperties {

@@ -3,7 +3,7 @@ package vip.wangjc.mq.util;
 /**
  * @author wangjc
  * @title: RabbitmqUtil
- * @projectName wangjc-vip
+ * @projectName wangjc-vip-mq
  * @date 2020/12/25 - 16:51
  */
 public class RabbitmqUtil {

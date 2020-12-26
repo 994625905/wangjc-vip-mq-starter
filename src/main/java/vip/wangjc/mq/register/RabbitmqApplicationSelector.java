@@ -8,7 +8,7 @@ import org.springframework.context.ApplicationContextAware;
  * bean的查找器
  * @author wangjc
  * @title: RabbitmqBeanSelector
- * @projectName wangjc-vip
+ * @projectName wangjc-vip-mq
  * @date 2020/12/24 - 19:45
  */
 public class RabbitmqApplicationSelector implements ApplicationContextAware {

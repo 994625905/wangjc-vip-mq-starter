@@ -23,7 +23,7 @@ import java.util.List;
  * rabbitmq初始化
  * @author wangjc
  * @title: RabbitmqAutoInit
- * @projectName wangjc-vip
+ * @projectName wangjc-vip-mq
  * @date 2020/12/24 - 15:25
  */
 public class RabbitmqAutoInit {

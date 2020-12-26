@@ -9,7 +9,7 @@ import org.springframework.amqp.rabbit.core.RabbitTemplate;
  * 消息发送到交换机返回机制，失败完成回调
  * @author wangjc
  * @title: MsgSendReturnCallBack
- * @projectName wangjc-vip
+ * @projectName wangjc-vip-mq
  * @date 2020/12/23 - 19:31
  */
 public class MsgSendReturnCallBack implements RabbitTemplate.ReturnsCallback {
