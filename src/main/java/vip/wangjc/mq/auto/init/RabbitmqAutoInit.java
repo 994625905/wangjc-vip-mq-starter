@@ -8,10 +8,10 @@ import org.springframework.amqp.rabbit.listener.SimpleMessageListenerContainer;
 import org.springframework.amqp.rabbit.listener.adapter.MessageListenerAdapter;
 import vip.wangjc.mq.auto.properties.RabbitmqAutoExchangeProperties;
 import vip.wangjc.mq.auto.properties.RabbitmqAutoQueueProperties;
-import vip.wangjc.mq.consumer.AbstractConsumerHandler;
+import vip.wangjc.mq.consumer.AbstractRabbitConsumerHandler;
 import vip.wangjc.mq.entity.RabbitmqExchangeType;
 import vip.wangjc.mq.entity.RabbitmqProjectType;
-import vip.wangjc.mq.producer.service.ProducerService;
+import vip.wangjc.mq.producer.service.RabbitProducerService;
 import vip.wangjc.mq.register.EnableRabbitmqRegister;
 import vip.wangjc.mq.register.RabbitmqApplicationSelector;
 import vip.wangjc.mq.util.RabbitmqUtil;
@@ -32,7 +32,7 @@ public class RabbitmqAutoInit {
 
     private final ConnectionFactory connectionFactory;
 
-    private final ProducerService producerService;
+    private final RabbitProducerService rabbitProducerService;
 
     private final RabbitmqAutoExchangeProperties exchangeProperties;
 
@@ -40,9 +40,9 @@ public class RabbitmqAutoInit {
 
     private final RabbitmqProjectType projectType = EnableRabbitmqRegister.getProjectType();
 
-    public RabbitmqAutoInit(ConnectionFactory connectionFactory, ProducerService producerService, RabbitmqAutoExchangeProperties exchangeProperties, RabbitmqAutoQueueProperties queueProperties){
+    public RabbitmqAutoInit(ConnectionFactory connectionFactory, RabbitProducerService rabbitProducerService, RabbitmqAutoExchangeProperties exchangeProperties, RabbitmqAutoQueueProperties queueProperties){
         this.connectionFactory = connectionFactory;
-        this.producerService = producerService;
+        this.rabbitProducerService = rabbitProducerService;
         this.exchangeProperties = exchangeProperties;
         this.queueProperties = queueProperties;
     }
@@ -72,7 +72,7 @@ public class RabbitmqAutoInit {
                 DirectExchange directExchange = null;
 
                 if(RabbitmqProjectType.producer.equals(this.projectType) || RabbitmqProjectType.all.equals(this.projectType)){
-                    directExchange = this.producerService.createDirectExchange(exchangeName, exchangeDurables, exchangeAutoDeletes);
+                    directExchange = this.rabbitProducerService.createDirectExchange(exchangeName, exchangeDurables, exchangeAutoDeletes);
                     logger.info("RabbitMQ初始化创建直连交换机完毕：名称[{}]，持久化[{}]，自动删除[{}]",exchangeName,exchangeDurables,exchangeAutoDeletes);
                 }
 
@@ -85,7 +85,7 @@ public class RabbitmqAutoInit {
                 TopicExchange topicExchange = null;
 
                 if(RabbitmqProjectType.producer.equals(this.projectType) || RabbitmqProjectType.all.equals(this.projectType)){
-                    topicExchange = this.producerService.createTopicExchange(exchangeName, exchangeDurables, exchangeAutoDeletes);
+                    topicExchange = this.rabbitProducerService.createTopicExchange(exchangeName, exchangeDurables, exchangeAutoDeletes);
                     logger.info("RabbitMQ初始化创建主题交换机完毕：名称[{}]，持久化[{}]，自动删除[{}]",exchangeName,exchangeDurables,exchangeAutoDeletes);
                 }
 
@@ -98,7 +98,7 @@ public class RabbitmqAutoInit {
                 FanoutExchange fanoutExchange = null;
 
                 if(RabbitmqProjectType.producer.equals(this.projectType) || RabbitmqProjectType.all.equals(this.projectType)){
-                    fanoutExchange = this.producerService.createFanoutExchange(exchangeName, exchangeDurables, exchangeAutoDeletes);
+                    fanoutExchange = this.rabbitProducerService.createFanoutExchange(exchangeName, exchangeDurables, exchangeAutoDeletes);
                     logger.info("RabbitMQ初始化创建广播交换机完毕：名称[{}]，持久化[{}]，自动删除[{}]",exchangeName,exchangeDurables,exchangeAutoDeletes);
                 }
 
@@ -111,7 +111,7 @@ public class RabbitmqAutoInit {
                 CustomExchange delayExchange = null;
 
                 if(RabbitmqProjectType.producer.equals(this.projectType) || RabbitmqProjectType.all.equals(this.projectType)){
-                    delayExchange = this.producerService.createDelayExchange(exchangeName, exchangeDurables, exchangeAutoDeletes);
+                    delayExchange = this.rabbitProducerService.createDelayExchange(exchangeName, exchangeDurables, exchangeAutoDeletes);
                     logger.info("RabbitMQ初始化创建延时交换机完毕：名称[{}] ",exchangeName);
                 }
 
@@ -154,27 +154,27 @@ public class RabbitmqAutoInit {
                 /** 延时队列的独特创建 */
                 Queue queue = null;
                 if(exchangeType == RabbitmqExchangeType.delay){
-                    queue = this.producerService.createDelayQueue(queueName, queueDurable, queueExclusive, queueAutoDelete);
+                    queue = this.rabbitProducerService.createDelayQueue(queueName, queueDurable, queueExclusive, queueAutoDelete);
                 }else{
-                    queue = this.producerService.createQueue(queueName, queueDurable, queueExclusive, queueAutoDelete);
+                    queue = this.rabbitProducerService.createQueue(queueName, queueDurable, queueExclusive, queueAutoDelete);
                 }
 
                 if(RabbitmqExchangeType.direct.equals(exchangeType)){
-                    this.producerService.bindQueueToDirectExchange((DirectExchange) exchange, queue, queueRoutingKey);
+                    this.rabbitProducerService.bindQueueToDirectExchange((DirectExchange) exchange, queue, queueRoutingKey);
                 }
                 if(RabbitmqExchangeType.topic.equals(exchangeType)){
-                    this.producerService.bindQueueToTopicExchange((TopicExchange) exchange, queue, queueRoutingKey);
+                    this.rabbitProducerService.bindQueueToTopicExchange((TopicExchange) exchange, queue, queueRoutingKey);
                 }
                 if(RabbitmqExchangeType.fanout.equals(exchangeType)){
-                    this.producerService.bindQueueToFanoutExchange((FanoutExchange) exchange, queue);
+                    this.rabbitProducerService.bindQueueToFanoutExchange((FanoutExchange) exchange, queue);
                 }
                 if(RabbitmqExchangeType.delay.equals(exchangeType)){
-                    this.producerService.bindDelayQueueToExchange( exchange, queue, queueRoutingKey);
+                    this.rabbitProducerService.bindDelayQueueToExchange( exchange, queue, queueRoutingKey);
 
                     /** 延时队列的后置-->准备一个死信交换机（直连替代），死信队列 */
-                    Exchange deadExchange = this.producerService.createDirectExchange(RabbitmqUtil.getDeadExchangeName(queueName),exchange.isDurable(),exchange.isAutoDelete());
-                    Queue deadQueue = this.producerService.createQueue(RabbitmqUtil.getDeadQueueName(queueName), queueDurable, queueExclusive, queueAutoDelete);
-                    this.producerService.bindDeadQueueToExchange(deadExchange,deadQueue,RabbitmqUtil.getDeadRoutingKey(queueName));
+                    Exchange deadExchange = this.rabbitProducerService.createDirectExchange(RabbitmqUtil.getDeadExchangeName(queueName),exchange.isDurable(),exchange.isAutoDelete());
+                    Queue deadQueue = this.rabbitProducerService.createQueue(RabbitmqUtil.getDeadQueueName(queueName), queueDurable, queueExclusive, queueAutoDelete);
+                    this.rabbitProducerService.bindDeadQueueToExchange(deadExchange,deadQueue,RabbitmqUtil.getDeadRoutingKey(queueName));
                 }
 
                 if(!RabbitmqExchangeType.fanout.equals(exchangeType)){
@@ -202,7 +202,7 @@ public class RabbitmqAutoInit {
      */
     private void addMessageListener(String queueName, AcknowledgeMode ack){
         try {
-            AbstractConsumerHandler consumerHandler = RabbitmqApplicationSelector.getBean(AbstractConsumerHandler.class);
+            AbstractRabbitConsumerHandler consumerHandler = RabbitmqApplicationSelector.getBean(AbstractRabbitConsumerHandler.class);
             if(consumerHandler != null){
 
                 SimpleMessageListenerContainer container = new SimpleMessageListenerContainer();

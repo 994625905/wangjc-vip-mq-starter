@@ -4,7 +4,7 @@ import org.springframework.amqp.AmqpException;
 import org.springframework.amqp.core.*;
 import org.springframework.amqp.rabbit.core.RabbitAdmin;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
-import vip.wangjc.mq.producer.service.ProducerService;
+import vip.wangjc.mq.producer.service.RabbitProducerService;
 import vip.wangjc.mq.producer.template.DefinedRabbitTemplate;
 import vip.wangjc.mq.util.RabbitmqUtil;
 
@@ -17,8 +17,7 @@ import java.util.Map;
  * @projectName wangjc-vip-mq
  * @date 2020/12/23 - 19:40
  */
-public class ProducerServiceImpl implements ProducerService {
-
+public class RabbitProducerServiceImpl implements RabbitProducerService {
 
     private final RabbitAdmin rabbitAdmin;
 
@@ -26,7 +25,7 @@ public class ProducerServiceImpl implements ProducerService {
 
     private final RabbitTemplate rabbitTemplate;
 
-    public ProducerServiceImpl(RabbitAdmin rabbitAdmin, DefinedRabbitTemplate definedRabbitTemplate){
+    public RabbitProducerServiceImpl(RabbitAdmin rabbitAdmin, DefinedRabbitTemplate definedRabbitTemplate){
         this.rabbitAdmin = rabbitAdmin;
         this.definedRabbitTemplate = definedRabbitTemplate;
         this.rabbitTemplate = definedRabbitTemplate.getRabbitTemplate();

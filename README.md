@@ -181,7 +181,7 @@ vip.wangjc.mq.queue.bind-exchange.wangjc-delay.exclusive=false
 自动注册了ProducerService的bean，作为应用项目，只需要关注后三个发送消息的方法即可，至于前面提供的功能，都是vip-wangjc-mq-starter在完成初始化时用到的。
 
 ```java
-    public interface ProducerService {
+    public interface RabbitProducerService {
 	/**
 	 * 获取RabbitAdmin
 	 * @return
@@ -324,7 +324,7 @@ vip.wangjc.mq.queue.bind-exchange.wangjc-delay.exclusive=false
 
 
 ```java
-    public abstract class AbstractConsumerHandler implements ChannelAwareMessageListener {
+    public abstract class AbstractRabbitConsumerHandler implements ChannelAwareMessageListener {
 	private static final Logger logger = LoggerFactory.getLogger(AbstractConsumerHandler.class);
 
 	/**
@@ -435,7 +435,7 @@ ProducerService对外提供自动注入的bean，做消息投递；AbstractConsu
 	│  │  │              │      MsgSendReturnCallBack.java （returns回调函数）
 	│  │  │              │
 	│  │  │              ├─consumer
-	│  │  │              │      AbstractConsumerHandler.java （消费者的抽象类）
+	│  │  │              │      AbstractRabbitConsumerHandler.java （消费者的抽象类）
 	│  │  │              │
 	│  │  │              ├─entity
 	│  │  │              │      RabbitmqExchangeType.java （枚举：交换机类型）
@@ -443,10 +443,10 @@ ProducerService对外提供自动注入的bean，做消息投递；AbstractConsu
 	│  │  │              │
 	│  │  │              ├─producer
 	│  │  │              │  ├─service
-	│  │  │              │  │  │  ProducerService.java （接口：生产者功能）
+	│  │  │              │  │  │  RabbitProducerService.java （接口：生产者功能）
 	│  │  │              │  │  │
 	│  │  │              │  │  └─impl
-	│  │  │              │  │          ProducerServiceImpl.java （生产者功能的实现）
+	│  │  │              │  │          RabbitProducerServiceImpl.java （生产者功能的实现）
 	│  │  │              │  │
 	│  │  │              │  └─template
 	│  │  │              │          DefinedRabbitTemplate.java （自定义的RabbitTemplate，添加一些set项）
@@ -533,7 +533,7 @@ ProducerService对外提供自动注入的bean，做消息投递；AbstractConsu
     @RequestMapping(value = "mq")
     public class ProducerController {
 	@Autowired
-	private ProducerService producerService;
+	private RabbitProducerService producerService;
 
 	@RequestMapping(value = "sendDirect")
 	public Object sendDirect(){
@@ -562,7 +562,7 @@ ProducerService对外提供自动注入的bean，做消息投递；AbstractConsu
 
 ```java
     @Component
-    public class ConsumerHandler extends AbstractConsumerHandler {
+    public class ConsumerHandler extends AbstractRabbitConsumerHandler {
 	@Override
 	public Boolean handleMessage(String msg, Channel channel, String queue) {
 

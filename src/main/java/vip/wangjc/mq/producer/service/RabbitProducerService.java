@@ -11,7 +11,7 @@ import org.springframework.amqp.rabbit.core.RabbitTemplate;
  * @projectName wangjc-vip-mq
  * @date 2020/12/23 - 19:39
  */
-public interface ProducerService {
+public interface RabbitProducerService {
 
     /**
      * 获取RabbitAdmin

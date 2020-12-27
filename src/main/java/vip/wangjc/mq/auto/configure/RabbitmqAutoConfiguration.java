@@ -13,8 +13,8 @@ import vip.wangjc.mq.auto.properties.RabbitmqAutoExchangeProperties;
 import vip.wangjc.mq.auto.properties.RabbitmqAutoQueueProperties;
 import vip.wangjc.mq.callback.MsgSendConfirmCallBack;
 import vip.wangjc.mq.callback.MsgSendReturnCallBack;
-import vip.wangjc.mq.producer.service.ProducerService;
-import vip.wangjc.mq.producer.service.impl.ProducerServiceImpl;
+import vip.wangjc.mq.producer.service.RabbitProducerService;
+import vip.wangjc.mq.producer.service.impl.RabbitProducerServiceImpl;
 import vip.wangjc.mq.producer.template.DefinedRabbitTemplate;
 
 /**
@@ -86,18 +86,18 @@ public class RabbitmqAutoConfiguration {
      */
     @Bean
     @ConditionalOnBean({RabbitAdmin.class,DefinedRabbitTemplate.class})
-    public ProducerService producerService(RabbitAdmin rabbitAdmin, DefinedRabbitTemplate definedRabbitTemplate){
-        return new ProducerServiceImpl(rabbitAdmin, definedRabbitTemplate);
+    public RabbitProducerService rabbitProducerService(RabbitAdmin rabbitAdmin, DefinedRabbitTemplate definedRabbitTemplate){
+        return new RabbitProducerServiceImpl(rabbitAdmin, definedRabbitTemplate);
     }
 
     /**
      * 自动初始化
-     * @param producerService
+     * @param rabbitProducerService
      * @return
      */
     @Bean
-    @ConditionalOnBean(ProducerService.class)
-    public RabbitmqAutoInit rabbitmqAutoInit(ConnectionFactory connectionFactory, ProducerService producerService){
-        return new RabbitmqAutoInit(connectionFactory, producerService, this.exchangeProperties, this.queueProperties);
+    @ConditionalOnBean(RabbitProducerService.class)
+    public RabbitmqAutoInit rabbitmqAutoInit(ConnectionFactory connectionFactory, RabbitProducerService rabbitProducerService){
+        return new RabbitmqAutoInit(connectionFactory, rabbitProducerService, this.exchangeProperties, this.queueProperties);
     }
 }
