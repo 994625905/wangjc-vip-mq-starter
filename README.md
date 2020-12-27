@@ -325,7 +325,7 @@ vip.wangjc.mq.queue.bind-exchange.wangjc-delay.exclusive=false
 
 ```java
     public abstract class AbstractRabbitConsumerHandler implements ChannelAwareMessageListener {
-	private static final Logger logger = LoggerFactory.getLogger(AbstractConsumerHandler.class);
+	private static final Logger logger = LoggerFactory.getLogger(AbstractRabbitConsumerHandler.class);
 
 	/**
 	 * 存储需要手动确认消息的队列
