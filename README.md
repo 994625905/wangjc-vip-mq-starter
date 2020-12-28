@@ -173,6 +173,12 @@ vip.wangjc.mq.queue.bind-exchange.wangjc-delay.exclusive=false
 	 * @return
 	 */
 	Class<? extends MsgSendReturnCallBack> returns() default MsgSendReturnCallBack.class;
+        
+    /**
+     * 扫描的消费者包路径（针对消费者使用）
+     * @return
+     */
+    String[] packages() default {};
     }
 ```
 
@@ -398,7 +404,26 @@ vip.wangjc.mq.queue.bind-exchange.wangjc-delay.exclusive=false
     }
 ```
 
-消费端只需要继承该抽象类，重写handleMessage方法来执行根据消息具体的业务逻辑即可。
+消费端只需要继承该抽象类，添加注解RabbitConsumer，重写handleMessage方法来执行根据消息具体的业务逻辑即可。
+
+## 消费者声明注解
+
+为了将业务逻辑充分解耦，强制将消费者分类处理，采用注解来声明消费者：一个队列可以有多个消费者（至少一个，否则消息将在队列中堆积），多线程支持，默认负载均衡的轮训策略。
+
+```java
+@Target({ElementType.TYPE})
+@Retention(RetentionPolicy.RUNTIME)
+public @interface RabbitConsumer {
+
+    /**
+     * 监听的队列名：必填项
+     * @return
+     */
+    String queue();
+}
+```
+
+
 
 ------------
 
@@ -417,6 +442,7 @@ ProducerService对外提供自动注入的bean，做消息投递；AbstractConsu
 	│  │  │          └─mq
 	│  │  │              ├─annotation
 	│  │  │              │      EnableRabbitMq.java （注解：开启wangjc-vip-mq组件）
+    │  │  │              │      RabbitConsumer.java （注解：声明消费者）
 	│  │  │              │
 	│  │  │              ├─auto
 	│  │  │              │  ├─configure
@@ -440,6 +466,9 @@ ProducerService对外提供自动注入的bean，做消息投递；AbstractConsu
 	│  │  │              ├─entity
 	│  │  │              │      RabbitmqExchangeType.java （枚举：交换机类型）
 	│  │  │              │      RabbitmqProjectType.java （枚举：当前应用类型）
+	│  │  │              │
+    │  │  │              ├─pool
+	│  │  │              │      RabbitConsumerPool.java （消费者的缓存池）
 	│  │  │              │
 	│  │  │              ├─producer
 	│  │  │              │  ├─service
@@ -467,7 +496,7 @@ ProducerService对外提供自动注入的bean，做消息投递；AbstractConsu
 
 
 **UML图如下：**
-![wangjc-vip-mq-starter类图](http://www.wangjc.vip/group1/M00/00/01/rBAAD1_nA9mAXD73AAKV1GUrOL4733.png "wangjc-vip-mq-starter类图")
+![wangjc-vip-mq-starter类图](http://www.wangjc.vip/group1/M00/00/01/rBAAD1_p1OqAKpuWAAK3Ko6wfQs902.png "wangjc-vip-mq-starter类图")
 
 ------------
 
@@ -520,10 +549,12 @@ ProducerService对外提供自动注入的bean，做消息投递；AbstractConsu
 
 ## 3.添加核心注解
 
-当然，注解参数都可以采用默认配置的
+当然，注解参数都可以采用默认配置的。
+
+type如果注明all或者consumer的话，可以顺手设置packages，当然不设置也可以，只不过扫描范围将被扩大到从根目录开始，项目大的话比较耗时。
 
 ```java
-@EnableRabbitMq(type = RabbitmqProjectType.all,confirm = SendConfirmCallBack.class,returns = SendReturnCallBack.class)
+@EnableRabbitMq(type = RabbitmqProjectType.all,confirm = SendConfirmCallBack.class,returns = SendReturnCallBack.class,packages = {"vip.wangjc.test.mq.consumer"})
 ```
 
 ## 4.生产者--消息投递
@@ -560,18 +591,57 @@ ProducerService对外提供自动注入的bean，做消息投递；AbstractConsu
 
 ## 5.消费者--消息处理
 
+多个消费者测试负载均衡
+
 ```java
-    @Component
-    public class ConsumerHandler extends AbstractRabbitConsumerHandler {
-	@Override
-	public Boolean handleMessage(String msg, Channel channel, String queue) {
+@RabbitConsumer(queue = "direct-queue1")
+public class ConsumerHandler extends AbstractConsumerHandler {
 
-		System.out.println(msg);
-		System.out.println(queue);
+    private static final Logger logger = LoggerFactory.getLogger(ConsumerHandler.class);
 
-		return true;
-	}
+    @Override
+    public Boolean handleMessage(String msg, Channel channel, String queue) {
+
+        logger.info(msg);
+        logger.info(queue);
+
+        return true;
     }
+}
+```
+
+```java
+@RabbitConsumer(queue = "direct-queue1")
+public class ConsumerHandlerMore extends AbstractConsumerHandler {
+
+    private static final Logger logger = LoggerFactory.getLogger(ConsumerHandlerMore.class);
+
+    @Override
+    public Boolean handleMessage(String msg, Channel channel, String queue) {
+
+        logger.info(msg);
+        logger.info(queue);
+
+        return true;
+    }
+}
+```
+
+```java
+@RabbitConsumer(queue = "direct-queue1")
+public class ConsumerHandlerThree extends AbstractConsumerHandler {
+
+    private static final Logger logger = LoggerFactory.getLogger(ConsumerHandlerThree.class);
+
+    @Override
+    public Boolean handleMessage(String msg, Channel channel, String queue) {
+
+        logger.info(msg);
+        logger.info(queue);
+
+        return true;
+    }
+}
 ```
 
 更多的业务场景，我就不一一做演示了。
