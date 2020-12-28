@@ -11,9 +11,9 @@ import vip.wangjc.mq.auto.properties.RabbitmqAutoQueueProperties;
 import vip.wangjc.mq.consumer.AbstractRabbitConsumerHandler;
 import vip.wangjc.mq.entity.RabbitmqExchangeType;
 import vip.wangjc.mq.entity.RabbitmqProjectType;
+import vip.wangjc.mq.pool.RabbitConsumerPool;
 import vip.wangjc.mq.producer.service.RabbitProducerService;
 import vip.wangjc.mq.register.EnableRabbitmqRegister;
-import vip.wangjc.mq.register.RabbitmqApplicationSelector;
 import vip.wangjc.mq.util.RabbitmqUtil;
 
 import javax.annotation.PostConstruct;
@@ -202,29 +202,30 @@ public class RabbitmqAutoInit {
      */
     private void addMessageListener(String queueName, AcknowledgeMode ack){
         try {
-            AbstractRabbitConsumerHandler consumerHandler = RabbitmqApplicationSelector.getBean(AbstractRabbitConsumerHandler.class);
-            if(consumerHandler != null){
+            List<AbstractRabbitConsumerHandler> list = RabbitConsumerPool.get(queueName);
+            if(list != null && list.size() != 0){
+                for(AbstractRabbitConsumerHandler consumerHandler:list){
+                    SimpleMessageListenerContainer container = new SimpleMessageListenerContainer();
+                    container.setConnectionFactory(this.connectionFactory);
+                    container.setQueueNames(queueName);
+                    container.setAcknowledgeMode(ack);
 
-                SimpleMessageListenerContainer container = new SimpleMessageListenerContainer();
-                container.setConnectionFactory(this.connectionFactory);
-                container.setQueueNames(queueName);
-                container.setAcknowledgeMode(ack);
+                    if(ack == AcknowledgeMode.MANUAL){ // 人为手动确认消息被消费的队列
+                        consumerHandler.addManualQueue(queueName);
+                    }
 
-                if(ack == AcknowledgeMode.MANUAL){ // 人为手动确认消息被消费的队列
-                    consumerHandler.addManualQueue(queueName);
+                    /** 消息监听器适配器，已适配的方式来接收消息 */
+                    MessageListenerAdapter adapter = new MessageListenerAdapter(consumerHandler);
+                    container.setMessageListener(adapter);
+                    container.start();
+                    logger.info("已成功开始监听RabbitMQ异步消息：queue[{}] ",queueName);
                 }
-
-                /** 消息监听器适配器，已适配的方式来接收消息 */
-                MessageListenerAdapter adapter = new MessageListenerAdapter(consumerHandler);
-                container.setMessageListener(adapter);
-                container.start();
-                logger.info("已成功开始监听RabbitMQ异步消息：queue[{}] ",queueName);
             }else{
                 logger.info("======================= 消息监听器缺少对应的处理类 ======================");
             }
         }catch (Exception e){
+            logger.error("消息监听器适配器适配失败");
             logger.error(e.getMessage());
-            logger.error("该应用下缺乏对应的消息监听器");
         }
     }
 }

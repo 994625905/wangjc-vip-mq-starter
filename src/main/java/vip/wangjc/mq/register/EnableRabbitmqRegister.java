@@ -1,5 +1,6 @@
 package vip.wangjc.mq.register;
 
+import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
@@ -8,7 +9,12 @@ import org.springframework.context.annotation.ImportBeanDefinitionRegistrar;
 import org.springframework.core.annotation.AnnotationAttributes;
 import org.springframework.core.type.AnnotationMetadata;
 import vip.wangjc.mq.annotation.EnableRabbitMq;
+import vip.wangjc.mq.annotation.RabbitConsumer;
+import vip.wangjc.mq.consumer.AbstractRabbitConsumerHandler;
 import vip.wangjc.mq.entity.RabbitmqProjectType;
+import vip.wangjc.mq.pool.RabbitConsumerPool;
+
+import java.util.Set;
 
 /**
  * rabbitmq的注册器
@@ -49,6 +55,39 @@ public class EnableRabbitmqRegister implements ImportBeanDefinitionRegistrar {
 
         logger.info("[{}] has been registered to the bean container",confirmCallback.getName());
         logger.info("[{}] has been registered to the bean container",returnCallback.getName());
+
+        /**
+         * 消费者初始化
+         */
+        Enum<?> type = attributes.getEnum("type");
+        if(!type.equals(RabbitmqProjectType.producer)){
+            String[] packages = attributes.getStringArray("packages");
+            if(packages == null || packages.length == 0){
+                this.initRabbitConsumerPool(new Reflections("")); // 全路径扫描，从根路径开始
+            }else{
+                for(String pack:packages){
+                    this.initRabbitConsumerPool(new Reflections(pack));
+                }
+            }
+        }
+    }
+
+
+    /**
+     * 初始化消费者缓存池
+     * @param reflections
+     */
+    private void initRabbitConsumerPool(Reflections reflections){
+        Set<Class<?>> consumerSet = reflections.getTypesAnnotatedWith(RabbitConsumer.class);
+        for(Class<?> clazz:consumerSet){
+            try {
+                RabbitConsumer consumer = clazz.getAnnotation(RabbitConsumer.class);
+                RabbitConsumerPool.set(consumer.queue(), (AbstractRabbitConsumerHandler) clazz.newInstance());
+            } catch (InstantiationException | IllegalAccessException e) {
+                logger.error("init consumer pool error,reason:[{}]",e.getMessage());
+                e.printStackTrace();
+            }
+        }
     }
 
     /**

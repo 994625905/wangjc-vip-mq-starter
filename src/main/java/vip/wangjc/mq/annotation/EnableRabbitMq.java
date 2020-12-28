@@ -42,4 +42,9 @@ public @interface EnableRabbitMq {
      */
     Class<? extends MsgSendReturnCallBack> returns() default MsgSendReturnCallBack.class;
 
+    /**
+     * 扫描的包路径（针对消费者使用）
+     * @return
+     */
+    String[] packages() default {};
 }

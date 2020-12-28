@@ -13,7 +13,7 @@
 
     <groupId>vip.wangjc</groupId>
     <artifactId>wangjc-vip-mq-starter</artifactId>
-    <version>1.0.3</version>
+    <version>1.0.4</version>
 
     <name>wangjc-vip</name>
     <description>wangjc-vip</description>
@@ -175,10 +175,23 @@
 
     <dependencies>
 
+
+        <!--反射解析注解声明的类-->
+        <dependency>
+            <groupId>org.reflections</groupId>
+            <artifactId>reflections</artifactId>
+            <version>0.9.12</version>
+        </dependency>
+
         <!-- springboot集成rabbitmq依赖 -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-amqp</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-aop</artifactId>
         </dependency>
 
         <dependency>
