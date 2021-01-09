@@ -8,7 +8,7 @@ import org.springframework.amqp.rabbit.listener.SimpleMessageListenerContainer;
 import org.springframework.amqp.rabbit.listener.adapter.MessageListenerAdapter;
 import vip.wangjc.mq.auto.properties.RabbitmqAutoExchangeProperties;
 import vip.wangjc.mq.auto.properties.RabbitmqAutoQueueProperties;
-import vip.wangjc.mq.consumer.AbstractRabbitConsumerHandler;
+import vip.wangjc.mq.consumer.abstracts.AbstractRabbitConsumerHandler;
 import vip.wangjc.mq.entity.RabbitmqExchangeType;
 import vip.wangjc.mq.entity.RabbitmqProjectType;
 import vip.wangjc.mq.pool.RabbitConsumerPool;

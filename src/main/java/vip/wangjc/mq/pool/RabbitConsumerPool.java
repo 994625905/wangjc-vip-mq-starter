@@ -1,6 +1,6 @@
 package vip.wangjc.mq.pool;
 
-import vip.wangjc.mq.consumer.AbstractRabbitConsumerHandler;
+import vip.wangjc.mq.consumer.abstracts.AbstractRabbitConsumerHandler;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;

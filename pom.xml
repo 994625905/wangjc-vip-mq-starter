@@ -13,7 +13,7 @@
 
     <groupId>vip.wangjc</groupId>
     <artifactId>wangjc-vip-mq-starter</artifactId>
-    <version>1.0.4</version>
+    <version>1.0.5</version>
 
     <name>wangjc-vip</name>
     <description>wangjc-vip</description>
@@ -175,7 +175,6 @@
 
     <dependencies>
 
-
         <!--反射解析注解声明的类-->
         <dependency>
             <groupId>org.reflections</groupId>
@@ -187,11 +186,13 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-amqp</artifactId>
+            <optional>true</optional>
         </dependency>
 
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-aop</artifactId>
+            <optional>true</optional>
         </dependency>
 
         <dependency>

@@ -1,4 +1,4 @@
-package vip.wangjc.mq.consumer;
+package vip.wangjc.mq.consumer.abstracts;
 
 import com.rabbitmq.client.Channel;
 import org.slf4j.Logger;

@@ -10,7 +10,7 @@ import org.springframework.core.annotation.AnnotationAttributes;
 import org.springframework.core.type.AnnotationMetadata;
 import vip.wangjc.mq.annotation.EnableRabbitMq;
 import vip.wangjc.mq.annotation.RabbitConsumer;
-import vip.wangjc.mq.consumer.AbstractRabbitConsumerHandler;
+import vip.wangjc.mq.consumer.abstracts.AbstractRabbitConsumerHandler;
 import vip.wangjc.mq.entity.RabbitmqProjectType;
 import vip.wangjc.mq.pool.RabbitConsumerPool;
 

@@ -461,7 +461,8 @@ ProducerService对外提供自动注入的bean，做消息投递；AbstractConsu
 	│  │  │              │      MsgSendReturnCallBack.java （returns回调函数）
 	│  │  │              │
 	│  │  │              ├─consumer
-	│  │  │              │      AbstractRabbitConsumerHandler.java （消费者的抽象类）
+	│  │  │              │  ├─abstracts
+	│  │  │              │          AbstractRabbitConsumerHandler.java （消费者的抽象类）
 	│  │  │              │
 	│  │  │              ├─entity
 	│  │  │              │      RabbitmqExchangeType.java （枚举：交换机类型）
