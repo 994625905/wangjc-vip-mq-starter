@@ -175,13 +175,6 @@
 
     <dependencies>
 
-        <!--反射解析注解声明的类-->
-        <dependency>
-            <groupId>org.reflections</groupId>
-            <artifactId>reflections</artifactId>
-            <version>0.9.12</version>
-        </dependency>
-
         <!-- springboot集成rabbitmq依赖 -->
         <dependency>
             <groupId>org.springframework.boot</groupId>

@@ -1,6 +1,5 @@
 package vip.wangjc.mq.register;
 
-import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
@@ -13,6 +12,7 @@ import vip.wangjc.mq.annotation.RabbitConsumer;
 import vip.wangjc.mq.consumer.abstracts.AbstractRabbitConsumerHandler;
 import vip.wangjc.mq.entity.RabbitmqProjectType;
 import vip.wangjc.mq.pool.RabbitConsumerPool;
+import vip.wangjc.mq.util.RabbitmqUtil;
 
 import java.util.Set;
 
@@ -63,10 +63,10 @@ public class EnableRabbitmqRegister implements ImportBeanDefinitionRegistrar {
         if(!type.equals(RabbitmqProjectType.producer)){
             String[] packages = attributes.getStringArray("packages");
             if(packages == null || packages.length == 0){
-                this.initRabbitConsumerPool(new Reflections("")); // 全路径扫描，从根路径开始
+                this.initRabbitConsumerPool(""); // 全路径扫描，从根路径开始
             }else{
                 for(String pack:packages){
-                    this.initRabbitConsumerPool(new Reflections(pack));
+                    this.initRabbitConsumerPool(pack);
                 }
             }
         }
@@ -75,10 +75,10 @@ public class EnableRabbitmqRegister implements ImportBeanDefinitionRegistrar {
 
     /**
      * 初始化消费者缓存池
-     * @param reflections
+     * @param packages
      */
-    private void initRabbitConsumerPool(Reflections reflections){
-        Set<Class<?>> consumerSet = reflections.getTypesAnnotatedWith(RabbitConsumer.class);
+    private void initRabbitConsumerPool(String packages){
+        Set<Class<?>> consumerSet = RabbitmqUtil.getAnnotationClasses(packages, RabbitConsumer.class);
         for(Class<?> clazz:consumerSet){
             try {
                 RabbitConsumer consumer = clazz.getAnnotation(RabbitConsumer.class);
